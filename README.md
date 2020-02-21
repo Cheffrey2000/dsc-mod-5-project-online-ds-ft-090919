@@ -1,104 +1,100 @@
+### Predicting Diabetes using dietary information
 
-# Module 5 Final Project
+[Data Source] (https://www.kaggle.com/cdc/national-health-and-nutrition-examination-survey)
 
-
-## Introduction
-
-In this lesson, we'll review all the guidelines and specifications for the final project for Module 5.
+#### Using the data from The National Health and Nutrition Survey, we will attempt to predict a Diabetes diagnosis from the detailed dietary information obtained through interviews.
 
 
-## Objectives
+## Data cleaning
 
-* Understand all required aspects of the Final Project for Module 5
-* Understand all required deliverables
-* Understand what constitutes a successful project
+#### The first task with this data set is to combine the two files which contain the information we need for the analysis.  
+- The first file "diet" contains answers to questions about dietary habits.
+- The second file "questionnaire"  has information about the resopondents health conditions including whether or not they have been diagnosed with diabetes or not.
 
-## Final Project Summary
+#### The two files will be joined using the common column "seqn" which is the unique identifier for each respondent.
 
-Congratulations! You've made it through another _intense_ module, and now you're ready to show off your newfound Machine Learning skills!
+#### The resulting dataframe is below.
+- the shape is below and consists of 168 features and 9813 instances.
 
-![awesome](https://raw.githubusercontent.com/learn-co-curriculum/dsc-mod-5-project/master/smart.gif)
+<img src="working_dataset.PNG" alt="WOrking DataSet Graphic" title="Working DataSet" />
 
-All that remains for Module 5 is to complete the final project!
+#### Many of the columns are not necessary for our analysis, so we dropped them.
+- __'SEQN1'__ is the same as __'SEQN'__ and is not necessary after the join
+- __'DR1EXMER'__ is an identifier for the interviewer
+- __'DR1DBIH'__ is the number of days elapsed between the exam and interview
+- __'DR1LANG'__ is the language used by the respondent for the interview
+- __'DR1MNRSP'__ is the person who answered the questions, subject or caretaker
+- __'DR1HELPD'__ identifies who helped answer the questions, if anyone
 
-## The Project
+#### There were a pretty good amount of NaN values, so we dealt with them using the Pandas function fillna
+- Other than the NaN values, the dataset was clean with the exception of some placeholders which were cleaned up using a custom function we created called _"fix_placeholder"_
 
-For this project, you're going to select a dataset of your choosing and create a classification model. You'll start by identifying a problem you can solve with classification, and then identify a dataset. You'll then use everything you've learned about Data Science and Machine Learning thus far to source a dataset, preprocess and explore it, and then build and interpret a classification model that answers your chosen question.
+#### Our target, DIQ010 has multiple values.  We dropped the few that were refused, didn't know or were missing,
+
+we also combined the borderline responses with the yes responses to treat them as a confirmed diagnosis for this analysis.
+
+#### After cleaning and organizing, the cleaned data was saved to a new file, "DIQ010_Target.csv"
+
+## Modeling
+
+#### A first look at the data revealed that it is unbalanced.  
+- We used SMOTE to balance it out for analysis.
+
+<img src="Imbalanced Data Diag.jpg" alt="Data Distribution Graphic" title="Data Distributuion Graph" />
+
+#### Once the data was loaded, and a preliminary model was run, it was discovered that the _'id'_ column was causing leaked data.  
+- This column was removed.
+
+### Modeling
+- RandomForestClassifier
+
+<img src="rf_cm_graph.jpg" alt="RF Confusion Matrix Graph" title="Random Forest Confusion Matrix" />
+
+This classifier is optimizing for precision and was not yielding the desired results.
+
+#### Using GridSearchCV we will try all combinations of a few hyperparameters.
+- _n_estimators_
+    - Using 10, 20, 50, and 100
+- _criterion_
+    - entropy and gini
+- _max_depth_
+    - 1, 2, 5, and 10
+- _min_samples_split_
+    - 0, 1, 2, and 3
+
+Using the best_params_ function we retrieved the following results:
+- criterion': 'gini',
+- max_depth': 1,
+- min_samples_split': 2,
+- n_estimators': 10
+
+#### The resulting model was a little more promising as seen below.
+
+<img src="rf_gridsearch_graph.jpg" alt="RF GridSearch Graph" title="Random Forest Best Params Confusion Matrix" />
+
+over 25% are being labeled as false positives, so we will try other classifiers.
+
+#### Next we tried KNN classifier
+- The first step was to use a for loop to test some parameter combinations and find the best combination.
+
+<img src="KNN_params.jpg" alt="KNN Parameters Table" title="KNN Params Table" />
+
+#### In an attempt to improve the performance of the model, we scaled the data using Sklearn's StandardScaler function.
+- This gave us the following improved results.
 
 
-### Selecting a Data Set
+<img src="KNN_scaled_params.jpg" alt="KNN Scaled Parameters Table" title="KNN Scaled Params Table" />
 
-We encourage you to be very thoughtful when identifying your problem and selecting your data set--an overscoped project goal or a poor data set can quickly bring an otherwise promising project to a grinding halt.
+#### This resulted in some acceptable model results, as seen in the confusion matrix below.
 
-To help you select an appropriate data set for this project, we've set some guidelines:
+<img src="KNN_scaled_cm.jpg" alt="KNN Scaled CM" title="KNN Scaled Confusion matrix" />
 
-1. Your dataset should work for classification. The classification task can be either binary or multiclass, as long as it's a classification model.   
+#### Next we attempted another classifier, a Support Vector Machine, the results are illustrated below.
 
-2. Your dataset needs to be of sufficient complexity. Try to avoid picking an overly simple dataset. Try to avoid extremely small datasets, as well as the most common datasets like titanic, iris, MNIST, etc. We want to see all the steps of the Data Science Process in this project--it's okay if the dataset is mostly clean, but we expect to see some preprocessing and exploration. See the following section, **_Data Set Constraints_**, for more information on this.   
+<img src="SVM_cm.jpg" alt="SVM Confusin Matrix" title="SVM Confusion Matrix" />
 
-3. On the other end of the spectrum, don't pick a problem that's too complex, either. Stick to problems that you have a clear idea of how you can use machine learning to solve it. For now, we recommend you stay away from overly complex problems in the domains of Natural Language Processing or Computer Vision--although those domains make use of Supervised Learning, they come with a lot of other special requirements and techniques that you don't know yet (but you'll learn soon!). If you're chosen problem feels like you've overscoped, then it probably is. If you aren't sure if your problem scope is appropriate, double check with your instructor!  
+#### This is the best performing model so far and it has acceptable results.
 
-4. **_Serious Bonus Points_** if some or all of the data is data you have to source yourself through web scraping or interacting with a 3rd party API! Having projects that show off your ability to source data effectively make you look that much more impressive when showing your work off to potential employers!
-
-### Data Set Constraints
-
-When selecting a data set, be sure to take into consideration the following constraints:
-
-1. Your data set can't be one we've already worked with in any labs.
-2. Your data set should contain a minimum of 1000 rows.    
-3. Your data set should contain a minimum of 10 predictor columns, before any one-hot encoding is performed.   
-4. Your instructor must provide final approval on your data set.
-
-### Problem First, or Data First?
-
-There are two ways that you can about getting started: **_Problem-First_** or **_Data-First_**.
-
-**_Problem-First_**: Start with a problem that you want to solve with classification, and then try to find the data you need to solve it.  If you can't find any data to solve your problem, then you should pick another problem.
-
-**_Data-First_**: Take a look at some of the most popular internet repositories of cool data sets we've listed below. If you find a data set that's particularly interesting for you, then it's totally okay to build your problem around that data set.
-
-There are plenty of amazing places that you can get your data from. We recommend you start looking at data sets in some of these resources first:
-
-* [UCI Machine Learning Datasets Repository](https://archive.ics.uci.edu/ml/datasets.html)
-* [Kaggle Datasets](https://www.kaggle.com/datasets)
-* [Awesome Datasets Repo on Github](https://github.com/awesomedata/awesome-public-datasets)
-* [New York City Open Data Portal](https://opendata.cityofnewyork.us/)
-* [Inside AirBNB ](http://insideairbnb.com/)
+## Conclusion:
 
 
-## The Deliverables
-
-For online students, your completed project should contain the following four deliverables:
-
-1. A **_Jupyter Notebook_** containing any code you've written for this project. This work will need to be pushed to your GitHub repository in order to submit your project.
-
-2. An organized **README.md** file in the GitHub repository that describes the contents of the repository. This file should be the source of information for navigating through the repository. 
-
-3. A **_[Blog Post](https://github.com/learn-co-curriculum/dsc-welcome-blogging)_**.
-
-4. An **_"Executive Summary" PowerPoint Presentation_** that gives a brief overview of your problem/dataset, and each step of the OSEMN process.
-
-Note: On-campus students may have different deliverables, please speak with your instructor.
-
-### Jupyter Notebook Must-Haves
-
-For this project, your Jupyter Notebook should meet the following specifications:
-
-**_Organization/Code Cleanliness_**
-
-* The notebook should be well organized, easy to follow, and code is commented where appropriate.  
-    * Level Up: The notebook contains well-formatted, professional looking markdown cells explaining any substantial code. All functions have docstrings that act as professional-quality documentation.  
-* The notebook is written to technical audiences with a way to both understand your approach and reproduce your results. The target audience for this deliverable is other data scientists looking to validate your findings.  
-
-**_Process, Methodology, and Findings_**
-
-* Your notebook should contain a clear record of your process and methodology for exploring and preprocessing your data, building and tuning a model, and interpreting your results.
-* We recommend you use the OSEMN process to help organize your thoughts and stay on track.
-
-### Blog Post Must-Haves
-
-Refer back to the [Blogging Guidelines](https://github.com/learn-co-curriculum/dsc-welcome-blogging) for the technical requirements and blog ideas.
-
-## Grading Rubric 
-
-Online students can find a PDF of the grading rubric for the project [here](https://github.com/learn-co-curriculum/dsc-mod-5-project/blob/master/module5_project_rubric.pdf). _Note: On-campus students may have different requirements, please speak with your instructor._ 
