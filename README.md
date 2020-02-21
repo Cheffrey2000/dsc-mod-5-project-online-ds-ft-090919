@@ -70,28 +70,28 @@ Using the best_params_ function we retrieved the following results:
 
 #### The resulting model was a little more promising as seen below.
 
-<img src="rf_gridsearch_graph.jpg" alt="RF GridSearch Graph" title="Random Forest Best Params Confusion Matrix" />
+<img src="rf_gridsearch_graph.JPG" alt="RF GridSearch Graph" title="Random Forest Best Params Confusion Matrix" />
 
 over 25% are being labeled as false positives, so we will try other classifiers.
 
 #### Next we tried KNN classifier
 - The first step was to use a for loop to test some parameter combinations and find the best combination.
 
-<img src="KNN_params.jpg" alt="KNN Parameters Table" title="KNN Params Table" />
+<img src="KNN_params.JPG" alt="KNN Parameters Table" title="KNN Params Table" />
 
 #### In an attempt to improve the performance of the model, we scaled the data using Sklearn's StandardScaler function.
 - This gave us the following improved results.
 
 
-<img src="KNN_scaled_params.jpg" alt="KNN Scaled Parameters Table" title="KNN Scaled Params Table" />
+<img src="KNN_scaled_params.JPG" alt="KNN Scaled Parameters Table" title="KNN Scaled Params Table" />
 
 #### This resulted in some acceptable model results, as seen in the confusion matrix below.
 
-<img src="KNN_scaled_cm.jpg" alt="KNN Scaled CM" title="KNN Scaled Confusion matrix" />
+<img src="KNN_scaled_cm.JPG" alt="KNN Scaled CM" title="KNN Scaled Confusion matrix" />
 
 #### Next we attempted another classifier, a Support Vector Machine, the results are illustrated below.
 
-<img src="SVM_cm.jpg" alt="SVM Confusin Matrix" title="SVM Confusion Matrix" />
+<img src="SVM_cm.JPG" alt="SVM Confusin Matrix" title="SVM Confusion Matrix" />
 
 #### This is the best performing model so far and it has acceptable results.
 
