@@ -1,9 +1,9 @@
 ### Predicting Diabetes using dietary information
 
-<a src="https://www.kaggle.com/cdc/national-health-and-nutrition-examination-survey">Data Source</a>
-![Presentation Video] (https://youtu.be/GQKXZvqVS14)  
-![Blog Post] (https://medium.com/@cheffrey2000/data-science-data-not-science-f670c31242aa?source=friends_link&sk=805f34b7e233f79f88e10453a2d9f820)  
-![Presentation Slide Deck] (https://docs.google.com/presentation/d/1uwT3q4xS26hub2sBi-drLQfemYQ5MTH9B7JOZ0y2dJI/edit?usp=sharing)  
+<a href="https://www.kaggle.com/cdc/national-health-and-nutrition-examination-survey">Data Source</a>  
+<a href="https://youtu.be/GQKXZvqVS14">Presentation Video</a>  
+<a href="https://medium.com/@cheffrey2000/data-science-data-not-science-f670c31242aa?source=friends_link&sk=805f34b7e233f79f88e10453a2d9f820">Blog Post</a>  
+<a href="https://docs.google.com/presentation/d/1uwT3q4xS26hub2sBi-drLQfemYQ5MTH9B7JOZ0y2dJI/edit?usp=sharing">Presentation Slide Deck</a>  
 
 #### Using the data from The National Health and Nutrition Survey, we will attempt to predict a Diabetes diagnosis from the detailed dietary information obtained through interviews.
 
